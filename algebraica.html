@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Derivadas Algebraicas Paso a Paso</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:20px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+h1{
+    text-align:center;
+    color:#1e40af;
+}
+
+textarea{
+    width:100%;
+    height:100px;
+    padding:10px;
+    font-size:18px;
+    border-radius:10px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.resultado{
+    margin-top:20px;
+    padding:15px;
+    background:#eef2ff;
+    border-radius:10px;
+}
+
+.paso{
+    background:white;
+    margin:10px 0;
+    padding:10px;
+    border-left:5px solid #2563eb;
+    border-radius:5px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>Calculadora de Derivadas Algebraicas</h1>
+
+<p><b>Ejemplo:</b> 3x^4 + 2x^2 - 5x + 7</p>
+
+<textarea id="funcion"></textarea>
+
+<button onclick="derivar()">
+Calcular Derivada Paso a Paso
+</button>
+
+<div class="resultado" id="salida">
+Aquí aparecerá el procedimiento.
+</div>
+
+</div>
+
+<script>
+
+function derivar(){
+
+let expresion =
+document.getElementById("funcion").value;
+
+expresion = expresion.replace(/\s+/g,'');
+
+let terminos =
+expresion.match(/[+-]?[^+-]+/g);
+
+if(!terminos){
+document.getElementById("salida").innerHTML =
+"Ingresa una función válida.";
+return;
+}
+
+let pasos = "<h2>Procedimiento</h2>";
+
+let resultadoFinal = [];
+
+terminos.forEach((termino, i)=>{
+
+if(termino.includes("x^")){
+
+let partes = termino.split("x^");
+
+let coef = partes[0];
+
+if(coef === "" || coef === "+") coef = 1;
+if(coef === "-") coef = -1;
+
+coef = Number(coef);
+
+let exponente = Number(partes[1]);
+
+let nuevoCoef = coef * exponente;
+let nuevoExp = exponente - 1;
+
+let resultado;
+
+if(nuevoExp > 1){
+resultado = `${nuevoCoef}x^${nuevoExp}`;
+}
+else if(nuevoExp === 1){
+resultado = `${nuevoCoef}x`;
+}
+else{
+resultado = `${nuevoCoef}`;
+}
+
+resultadoFinal.push(resultado);
+
+pasos += `
+<div class="paso">
+<b>Paso ${i+1}</b><br>
+Función: ${termino}<br>
+Aplicamos la regla:<br>
+(d/dx)(axⁿ)=a·n·xⁿ⁻¹<br><br>
+
+(${coef})(${exponente})x^(${exponente}-1)<br>
+
+Resultado: <b>${resultado}</b>
+</div>
+`;
+
+}
+else if(termino.includes("x")){
+
+let coef = termino.replace("x","");
+
+if(coef === "" || coef === "+") coef = 1;
+if(coef === "-") coef = -1;
+
+resultadoFinal.push(coef);
+
+pasos += `
+<div class="paso">
+<b>Paso ${i+1}</b><br>
+Función: ${termino}<br>
+La derivada de ax es a.<br>
+Resultado: <b>${coef}</b>
+</div>
+`;
+
+}
+else{
+
+pasos += `
+<div class="paso">
+<b>Paso ${i+1}</b><br>
+Función: ${termino}<br>
+Es una constante.<br>
+Resultado: <b>0</b>
+</div>
+`;
+
+}
+
+});
+
+let resultado =
+resultadoFinal.join(" + ")
+.replace(/\+\s-\s/g," - ");
+
+pasos += `
+<hr>
+<h2>Resultado Final</h2>
+<h3>f'(x) = ${resultado}</h3>
+`;
+
+document.getElementById("salida").innerHTML = pasos;
+
+}
+
+</script>
+
+</body>
+</html>
